@@ -54,6 +54,11 @@ class User extends Authenticatable
 
     }
 
+    public function favorites()
+    {
+        return $this->belongsToMany(Question::class, 'favorites')->withTimestamps(); //'author_id', 'question_id');
+    }
+
     /**
      * The attributes that should be cast to native types.
      *
