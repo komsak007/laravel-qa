@@ -1,4 +1,4 @@
-@can('accept', $model)
+@if($model->is_best == NULL)
 <a 
     title="Mark this answer as best answer" 
     class="{{$model->status}} mt-2"
@@ -18,4 +18,4 @@
             <i class="fas fa-check fa-2x"></i>
         </a>
     @endif
-@endcan
+@endif

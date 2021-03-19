@@ -38,7 +38,7 @@
         @csrf
         <input type="hidden" name="vote" value="-1">
     </form>
-
+    
     @if ($model instanceof App\Question)
         @include ('shared._favorite', [
             'model' => $model
@@ -48,4 +48,4 @@
             'model' => $model
         ])
     @endif
-</div> 
+</div>
