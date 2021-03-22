@@ -32,6 +32,7 @@ export default {
                     position: 'bottomLeft'
                 })
                 this.isBest = true
+                location.reload();
             })
         }
     },
