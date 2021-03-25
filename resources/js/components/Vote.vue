@@ -75,7 +75,7 @@ export default {
 
             axios.post(this.endpoint, { vote })
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 this.$toast.success(res.data.message, "Success", {
                     timeout: 3000,
                     position: 'bottomLeft'
