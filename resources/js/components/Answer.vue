@@ -32,9 +32,12 @@
 <script>
 import Vote from './Vote.vue'
 import UserInfo from './UserInfo.vue'
+import modification from '../mixins/modification'
 
 export default {
     props: ['answer'],
+
+    mixins: [modification],
 
     components: {Vote, UserInfo},
 
@@ -50,59 +53,27 @@ export default {
     },
 
     methods: {
-        edit() {
-            this.beforeEditCache = this.body,
-            this.editing = true
+        setEditCache() {
+            this.beforeEditCache = this.body
         },
 
-        cancel() {
-            this.body = this.beforeEditCache,
-            this.editing = false
+        restoreFromCache() {
+            this.body = this.beforeEditCache
         },
 
-        update() {
-            axios.patch(this.endpoint, {
+        payload() {
+            return {
                 body: this.body
-            })
-            .then(res => {
-                console.log(res);
-                this.editing = false
-                this.bodyHtml = res.data.body_html
-                this.$toast.success(res.data.message, "Success", {timeout: 3000})
-            })
-            .catch(err => {
-                // console.log("Something went wrong ");
-                this.$toast.error(err.response.data.message, 'Error', {timeout: 3000})
-            });
+            }
         },
 
-        destroy () {
-            this.$toast.question("Are you sure about that?","Confirm?",{
-                timeout: 20000,
-                close: false,
-                overlay: true,
-                displayMode: 'once',
-                id: 'question',
-                zindex: 999,
-                title: 'Hey',
-                position: 'center',
-                buttons: [
-                    ['<button><b>YES</b></button>', (instance, toast) => {
-                        axios.delete(this.endpoint)
-                        .then(res => {
-                            this.$emit('deleted')
-                        });
-                        instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-            
-                    }, true],
-                    ['<button>NO</button>', function (instance, toast) {
-            
-                        instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-            
-                    }],
-                ],
-            });
-        } 
+        delete() {
+            axios.delete(this.endpoint)
+            .then(res => {
+                this.$toast.success(res.data.message, "Success", {timeout: 2000})
+                this.$emit('deleted')
+            })
+        }
     },
 
     computed: {
