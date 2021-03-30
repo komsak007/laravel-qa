@@ -17,6 +17,10 @@ Route::post('/token', 'Auth\LoginController@getToken');
 Route::get('/questions', 'Api\QuestionsController@index');
 Route::get('/questions/{question}/answers', 'Api\AnswersController@index');
 Route::get('/questions/{question}-{slug}', 'Api\QuestionDetailsController');
+Route::post('/login', 'Api\Auth\LoginController@store');
+Route::post('/token', 'Auth\LoginController@getToken');
+Route::delete('/logout', 'Api\Auth\LoginController@destroy')->middleware('auth:api');
+Route::post('/register','Api\Auth\RegisterController');
 
 Route::middleware(['auth:api'])->group(function() {
     Route::apiResource('/questions', 'Api\QuestionsController')->except('index');
