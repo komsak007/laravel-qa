@@ -4,6 +4,7 @@ import MyPostsPage from "../pages/MyPostsPage.vue";
 import NotFoundPage from "../pages/NotFoundPage.vue";
 import CreateQuestion from "../pages/CreateQuestion.vue";
 import LoginPage from "../pages/LoginPage.vue";
+import EditQuestionPage from "../pages/EditQuestionPage.vue";
 
 const routes = [
     {
@@ -38,6 +39,11 @@ const routes = [
         path: "/login-member",
         component: LoginPage,
         name: "login"
+    },
+    {
+        path: "/questions/:id/edit",
+        component: EditQuestionPage,
+        name: "questions.edit"
     },
     {
         path: "*",

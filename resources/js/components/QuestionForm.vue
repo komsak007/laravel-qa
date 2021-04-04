@@ -30,8 +30,8 @@ import MEditor from './MEditor.vue'
 export default {
     props: {
         isEdit: {
-            type: Boolean,
-            default: false
+        type: Boolean,
+        default: false
         }
     },
     components: { MEditor },
@@ -46,7 +46,7 @@ export default {
         }
     },
     mounted () {
-        EventBus.$on('error', errors => this.errors = errors)
+    EventBus.$on('error', errors => this.errors = errors)
         if (this.isEdit) {
             this.fetchQuestion();
         }
@@ -59,13 +59,13 @@ export default {
     methods: {
         fetchQuestion () {
             axios.get(`/questions/${this.$route.params.id}`)
-                 .then(({ data }) => {
-                     this.title = data.title
-                     this.body = data.body
-                 })
-                 .catch(error => {
-                     console.log(error.response);
-                 })
+            .then(({ data }) => {
+                this.title = data.title
+                this.body = data.body
+                })
+            .catch(error => {
+                console.log(error.response);
+                })
         },
         handleSubmit () {
             this.$emit('submitted', {
