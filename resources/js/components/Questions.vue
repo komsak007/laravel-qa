@@ -1,13 +1,13 @@
 <template>
     <div>
-       <div class="card-body">
-           <div v-if="questions.length">
-               <question-excerpt v-for="question in questions" :question="question" :key="question.id"></question-excerpt>
-           </div>
-           <div v-else class="alert alert-warning">
-               <strong>Sorry</strong> There are no questions available.
-           </div>
-       </div>
+        <div class="card-body">
+            <div v-if="questions.length">
+                <question-excerpt @deleted="remove(index)" v-for="(question, index) in questions" :question="question" :key="question.id"></question-excerpt>
+            </div>
+            <div v-else class="alert alert-warning">
+                <strong>Sorry</strong> There are no questions available.
+            </div>
+        </div>
         <div class="card-footer">
             <pagination :meta="meta" :links="links"></pagination>
         </div>
@@ -17,7 +17,6 @@
 <script>
 import QuestionExcerpt from './QuestionExcerpt.vue'
 import Pagination from './Pagination.vue'
- 
 export default {
     components: { 
         QuestionExcerpt,
@@ -31,11 +30,9 @@ export default {
             links: {}
         }
     },
- 
     mounted () {
         this.fetchQuestions();
     },
- 
     methods: {
         fetchQuestions () {
             axios.get('/questions', { params: this.$route.query })
@@ -44,9 +41,12 @@ export default {
                      this.links = data.links
                      this.meta = data.meta
                  })
+        },
+        remove (index) {
+            this.questions.splice(index, 1)
+            this.count--
         }
     },
-
     watch: {
         "$route": 'fetchQuestions'
     }

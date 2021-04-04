@@ -12439,6 +12439,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins_destroy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/destroy */ "./resources/js/mixins/destroy.js");
 //
 //
 //
@@ -12470,19 +12471,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_destroy__WEBPACK_IMPORTED_MODULE_0__["default"]],
   props: ['question'],
   methods: {
     str_plural: function str_plural(str, count) {
       return str + (count > 1 ? 's' : '');
+    },
+    "delete": function _delete() {
+      var _this = this;
+
+      axios["delete"]("/questions/".concat(this.question.id)).then(function (res) {
+        _this.$toast.success(res.data.message, "Success", {
+          timeout: 2000
+        });
+
+        _this.$emit('deleted');
+      });
     }
   },
   computed: {
@@ -12651,6 +12657,10 @@ __webpack_require__.r(__webpack_exports__);
         _this.links = data.links;
         _this.meta = data.meta;
       });
+    },
+    remove: function remove(index) {
+      this.questions.splice(index, 1);
+      this.count--;
     }
   },
   watch: {
@@ -67781,30 +67791,18 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("\n                    Edit\n                    ")]
+                  [_vm._v("Edit")]
                 )
               : _vm._e(),
             _vm._v(" "),
             _vm.authorize("deleteQuestion", _vm.question)
               ? _c(
-                  "form",
+                  "button",
                   {
-                    staticClass: "form-delete",
-                    attrs: { method: "post", action: "#" }
+                    staticClass: "btn btn-sm btn-outline-danger",
+                    on: { click: _vm.destroy }
                   },
-                  [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-sm btn-outline-danger",
-                        attrs: {
-                          type: "submit",
-                          onclick: "return confirm('Are you sure?')"
-                        }
-                      },
-                      [_vm._v("Delete")]
-                    )
-                  ]
+                  [_vm._v("Delete")]
                 )
               : _vm._e()
           ],
@@ -67813,7 +67811,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("p", { staticClass: "lead" }, [
-        _vm._v("\n            Asked by\n            "),
+        _vm._v("\n            Asked by \n            "),
         _c("a", { attrs: { href: "#" } }, [
           _vm._v(_vm._s(_vm.question.user.name))
         ]),
@@ -67977,17 +67975,22 @@ var render = function() {
       _vm.questions.length
         ? _c(
             "div",
-            _vm._l(_vm.questions, function(question) {
+            _vm._l(_vm.questions, function(question, index) {
               return _c("question-excerpt", {
                 key: question.id,
-                attrs: { question: question }
+                attrs: { question: question },
+                on: {
+                  deleted: function($event) {
+                    return _vm.remove(index)
+                  }
+                }
               })
             }),
             1
           )
         : _c("div", { staticClass: "alert alert-warning" }, [
             _c("strong", [_vm._v("Sorry")]),
-            _vm._v(" There are no questions available.\n       ")
+            _vm._v(" There are no questions available.\n        ")
           ])
     ]),
     _vm._v(" "),
@@ -83709,7 +83712,7 @@ __webpack_require__.r(__webpack_exports__);
     return user.id === answer.question.user.id;
   },
   deleteQuestion: function deleteQuestion(user, question) {
-    return user.id === question.user.id && question.answers_count < 1;
+    return user.id === question.user.id;
   }
 });
 
@@ -84707,6 +84710,48 @@ _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["dom"].watch();
 
 /***/ }),
 
+/***/ "./resources/js/mixins/destroy.js":
+/*!****************************************!*\
+  !*** ./resources/js/mixins/destroy.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    destroy: function destroy() {
+      var _this = this;
+
+      this.$toast.question("Are you sure about that?", "Confirm", {
+        timeout: 20000,
+        close: false,
+        overlay: true,
+        displayMode: "once",
+        id: "question",
+        zindex: 999,
+        title: "Hey",
+        position: "center",
+        buttons: [["<button><b>YES</b></button>", function (instance, toast) {
+          _this["delete"]();
+
+          instance.hide({
+            transitionOut: "fadeOut"
+          }, toast, "button");
+        }, true], ["<button>NO</button>", function (instance, toast) {
+          instance.hide({
+            transitionOut: "fadeOut"
+          }, toast, "button");
+        }]]
+      });
+    },
+    "delete": function _delete() {}
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/mixins/highlight.js":
 /*!******************************************!*\
   !*** ./resources/js/mixins/highlight.js ***!
@@ -84751,12 +84796,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/UserInfo.vue */ "./resources/js/components/UserInfo.vue");
 /* harmony import */ var _components_MEditor_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/MEditor.vue */ "./resources/js/components/MEditor.vue");
 /* harmony import */ var _highlight__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./highlight */ "./resources/js/mixins/highlight.js");
+/* harmony import */ var _destroy__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./destroy */ "./resources/js/mixins/destroy.js");
+
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_highlight__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  mixins: [_highlight__WEBPACK_IMPORTED_MODULE_3__["default"], _destroy__WEBPACK_IMPORTED_MODULE_4__["default"]],
   components: {
     Vote: _components_Vote_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     UserInfo: _components_UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -84781,12 +84828,14 @@ __webpack_require__.r(__webpack_exports__);
     update: function update() {
       var _this = this;
 
-      axios.put(this.endpoint, this.payload())["catch"](function (response) {
+      axios.put(this.endpoint, this.payload())["catch"](function (_ref) {
+        var response = _ref.response;
+
         _this.$toast.error(response.data.message, "Error", {
           timeout: 3000
         });
-      }).then(function (_ref) {
-        var data = _ref.data;
+      }).then(function (_ref2) {
+        var data = _ref2.data;
         _this.bodyHtml = data.body_html;
 
         _this.$toast.success(data.message, "Success", {
@@ -84798,33 +84847,7 @@ __webpack_require__.r(__webpack_exports__);
         return _this.highlight();
       });
     },
-    payload: function payload() {},
-    destroy: function destroy() {
-      var _this2 = this;
-
-      this.$toast.question("Are you sure about that?", "Confirm?", {
-        timeout: 20000,
-        close: false,
-        overlay: true,
-        displayMode: "once",
-        id: "question",
-        zindex: 999,
-        title: "Hey",
-        position: "center",
-        buttons: [["<button><b>YES</b></button>", function (instance, toast) {
-          _this2["delete"]();
-
-          instance.hide({
-            transitionOut: "fadeOut"
-          }, toast, "button");
-        }, true], ["<button>NO</button>", function (instance, toast) {
-          instance.hide({
-            transitionOut: "fadeOut"
-          }, toast, "button");
-        }]]
-      });
-    },
-    "delete": function _delete() {}
+    payload: function payload() {}
   }
 });
 
