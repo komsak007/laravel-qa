@@ -12287,7 +12287,9 @@ __webpack_require__.r(__webpack_exports__);
   props: ['meta', 'links'],
   computed: {
     pagesInfo: function pagesInfo() {
-      return "Page ".concat(this.meta.current_page, " of ").concat(this.meta.last_page);
+      var currentPage = this.meta.current_page || 1,
+          lastPage = this.meta.last_page || 1;
+      return "Page ".concat(currentPage, " of ").concat(lastPage);
     },
     isFirst: function isFirst() {
       return this.meta.current_page === 1;
@@ -12522,12 +12524,15 @@ __webpack_require__.r(__webpack_exports__);
     "delete": function _delete() {
       var _this = this;
 
+      this.$root.disableInterceptor();
       axios["delete"]("/questions/".concat(this.question.id)).then(function (res) {
         _this.$toast.success(res.data.message, "Success", {
           timeout: 2000
         });
 
-        _this.$emit('deleted');
+        eventBus.$emit('deleted', _this.question.id);
+
+        _this.$root.enableInterceptor();
       });
     }
   },
@@ -12672,6 +12677,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -12687,19 +12697,28 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
+    var _this = this;
+
     this.fetchQuestions();
+    eventBus.$on('deleted', function (id) {
+      var index = _this.questions.findIndex(function (question) {
+        return id === question.id;
+      });
+
+      _this.remove(index);
+    });
   },
   methods: {
     fetchQuestions: function fetchQuestions() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('/questions', {
         params: this.$route.query
       }).then(function (_ref) {
         var data = _ref.data;
-        _this.questions = data.data;
-        _this.links = data.links;
-        _this.meta = data.meta;
+        _this2.questions = data.data;
+        _this2.links = data.links;
+        _this2.meta = data.meta;
       });
     },
     remove: function remove(index) {
@@ -68286,15 +68305,10 @@ var render = function() {
           : _vm.questions.length
           ? _c(
               "div",
-              _vm._l(_vm.questions, function(question, index) {
+              _vm._l(_vm.questions, function(question) {
                 return _c("question-excerpt", {
                   key: question.id,
-                  attrs: { question: question },
-                  on: {
-                    deleted: function($event) {
-                      return _vm.remove(index)
-                    }
-                  }
+                  attrs: { question: question }
                 })
               }),
               1
@@ -84145,27 +84159,36 @@ Vue.component("spinner", _components_Spinner_vue__WEBPACK_IMPORTED_MODULE_4__["d
 var app = new Vue({
   el: "#app",
   data: {
-    loading: false
+    loading: false,
+    interceptor: null
   },
   created: function created() {
-    var _this = this;
+    this.enableInterceptor();
+  },
+  methods: {
+    enableInterceptor: function enableInterceptor() {
+      var _this = this;
 
-    // Add a request interceptor
-    axios.interceptors.request.use(function (config) {
-      _this.loading = true;
-      return config;
-    }, function (error) {
-      _this.loading = false;
-      return Promise.reject(error);
-    }); // Add a response interceptor
+      // Add a request interceptor
+      this.interceptor = axios.interceptors.request.use(function (config) {
+        _this.loading = true;
+        return config;
+      }, function (error) {
+        _this.loading = false;
+        return Promise.reject(error);
+      }); // Add a response interceptor
 
-    axios.interceptors.response.use(function (response) {
-      _this.loading = false;
-      return response;
-    }, function (error) {
-      _this.loading = false;
-      return Promise.reject(error);
-    });
+      axios.interceptors.response.use(function (response) {
+        _this.loading = false;
+        return response;
+      }, function (error) {
+        _this.loading = false;
+        return Promise.reject(error);
+      });
+    },
+    disableInterceptor: function disableInterceptor() {
+      axios.interceptors.request.eject(this.interceptor);
+    }
   },
   router: _router__WEBPACK_IMPORTED_MODULE_3__["default"]
 });
