@@ -13,6 +13,11 @@ const routes = [
         name: "home"
     },
     {
+        path: "/home",
+        component: QuestionsPage,
+        name: "home"
+    },
+    {
         path: "/questions",
         component: QuestionsPage,
         name: "questions"
@@ -33,12 +38,8 @@ const routes = [
     {
         path: "/questions/:slug",
         component: QuestionPage,
-        name: "questions.show"
-    },
-    {
-        path: "/login-member",
-        component: LoginPage,
-        name: "login"
+        name: "questions.show",
+        props: true
     },
     {
         path: "/questions/:id/edit",
