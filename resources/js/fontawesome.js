@@ -6,9 +6,10 @@ import {
     faCaretUp,
     faCaretDown,
     faStar,
-    faCheck
+    faCheck,
+    faSpinner
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faCaretUp, faCaretDown, faCheck, faStar);
+library.add(faCaretUp, faCaretDown, faCheck, faStar, faSpinner);
 
 dom.watch();
